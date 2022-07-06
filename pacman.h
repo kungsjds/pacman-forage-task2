@@ -19,6 +19,7 @@ class   PacMan : public QObject, public QGraphicsPixmapItem
 private:
     int                         i_pos;
     int                         j_pos;
+    int                         killed;
     int                         direction;
     int                         **map_int;
     QGraphicsPixmapItem         **map_pix;

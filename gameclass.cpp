@@ -38,25 +38,41 @@ GameLoop::~GameLoop()
     }
     delete []map_pix;
     delete []map_int;
+    ghost_instance.clear();
+    // CHANGE - Delete ghosts
 }
 
 void    GameLoop::ft_roll_game()
 {
-    timer_blinky = new QTimer();
-    timer_pinky = new QTimer();
-    timer_clyde = new QTimer();
+//    timer_blinky = new QTimer();
+//    timer_pinky = new QTimer();
+//    timer_clyde = new QTimer();
     timer_pacman = new QTimer();
     timer_inky = new QTimer();
+
     QObject::connect(timer_pacman, SIGNAL(timeout()), pacman, SLOT(ft_move()));
-    QObject::connect(timer_inky, SIGNAL(timeout()), inky, SLOT(ft_move_ghost()));
-    QObject::connect(timer_clyde, SIGNAL(timeout()), clyde, SLOT(ft_move_ghost()));
-    QObject::connect(timer_blinky, SIGNAL(timeout()), blinky, SLOT(ft_move_ghost()));
-    QObject::connect(timer_pinky, SIGNAL(timeout()), pinky, SLOT(ft_move_ghost()));
+
+    for (int i = 0; i < ghost_instance.size(); i++) {
+
+        // CHANGE - Setup all ghosts move
+        QObject::connect(timer_inky, SIGNAL(timeout()), ghost_instance[i], SLOT(ft_move_ghost()));
+
+        // CHANGE
+        // ? Why more than a timer if every ghosts and timers have the same value ?
+//        QObject::connect(timer_clyde, SIGNAL(timeout()), clyde, SLOT(ft_move_ghost()));
+//        QObject::connect(timer_blinky, SIGNAL(timeout()), blinky, SLOT(ft_move_ghost()));
+//        QObject::connect(timer_pinky, SIGNAL(timeout()), pinky, SLOT(ft_move_ghost()));
+
+    };
+
     timer_pacman->start(300);
     timer_inky->start(400);
-    timer_clyde->start(400);
-    timer_blinky->start(400);
-    timer_pinky->start(400);
+
+    // CHANGE
+    // ? Why more than a timer if every ghosts and timers have the same value ?
+//    timer_clyde->start(400);
+//    timer_blinky->start(400);
+//    timer_pinky->start(400);
 }
 
 void    GameLoop::ft_create_map()
@@ -145,6 +161,7 @@ GameLoop::GameLoop(char *file_name)
     pacman = new PacMan(map_int, map_pix, scene);
     pacman->setFlag(QGraphicsPixmapItem::ItemIsFocusable);
     pacman->setFocus();
+
     blinky = new Blinky(scene, map_int, pacman);
     pinky = new Pinky(scene, map_int, pacman);
     clyde = new Clyde(scene, map_int, pacman);
@@ -153,4 +170,104 @@ GameLoop::GameLoop(char *file_name)
     pinky->ft_set_friends(blinky, clyde, inky);
     clyde->ft_set_friends(blinky, pinky, inky);
     inky->ft_set_friends(blinky, pinky, clyde);
-}
+
+    ghost_instance.append(blinky);
+    ghost_instance.append(pinky);
+    ghost_instance.append(inky);
+    ghost_instance.append(clyde);
+
+    startTimer(30000);
+    // CHANGE - Start ghost doubling timer
+
+};
+
+// CHANGE - Double the ghosts
+void GameLoop::ft_double_ghost() {
+
+    for (int i = 0; i < ghost_instance.size(); i++) {
+
+        if (ghost_instance[i]->ft_get_killed() == 1) {
+
+            ghost_instance.removeAt(i);
+
+        };
+
+    };
+
+    int size = ghost_instance.size();
+
+    int xblinky = 0;
+    int xpinky = 0;
+    int xclyde = 0;
+    int xinky = 0;
+
+    for (int i = 0; i < size; i++) {
+
+        if (ghost_instance.size() <= 128 && ghost_instance[i]->ft_get_killed() == 0){
+
+            if (xblinky == 0) {
+                blinky = new Blinky(scene, map_int, pacman);
+                blinky->ft_set_friends(pinky, clyde, inky);
+
+                ghost_instance.append(blinky);
+
+                xblinky = 1;
+                continue;
+            };
+
+            if (xpinky == 0) {
+                pinky = new Pinky(scene, map_int, pacman);
+                pinky->ft_set_friends(blinky, clyde, inky);
+
+                ghost_instance.append(pinky);
+
+                xpinky = 1;
+                continue;
+            };
+
+            if (xclyde == 0) {
+                clyde = new Clyde(scene, map_int, pacman);
+                clyde->ft_set_friends(blinky, pinky, inky);
+
+                ghost_instance.append(clyde);
+
+                xclyde = 1;
+                xinky = 0;
+                continue;
+            };
+
+            if (xinky == 0) {
+                inky = new Inky(scene, map_int, pacman);
+                inky->ft_set_friends(blinky, pinky, clyde);
+
+                ghost_instance.append(inky);
+
+                xinky = 1;
+                xblinky = 0;
+                xpinky = 0;
+                xclyde = 0;
+            };
+
+        };
+
+    };
+
+    for (int i = size; i < ghost_instance.size(); i++) {
+
+        QObject::connect(timer_inky, SIGNAL(timeout()), ghost_instance[i], SLOT(ft_move_ghost()));
+
+    };
+
+    // CHANGE - End game
+    if (ghost_instance.size() >= 128) {
+        end_game = 1;
+    };
+
+};
+
+// CHANGE - timer to double ghosts
+void GameLoop::timerEvent(QTimerEvent *e){
+
+    ft_double_ghost();
+
+};

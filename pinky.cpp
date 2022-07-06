@@ -173,7 +173,9 @@ void        Pinky::ft_set_friends(Blinky *bl, Clyde *cl, Inky *ink)
 
 void    Pinky::ft_move_ghost()
 {
-    if (pacman->ft_get_point() >= 50)
+//    CHANGE - leave more fast
+    if (pacman->ft_get_point() >= 3)
+//      END
     {
         ft_find_pacman();
         if (direction == 1)

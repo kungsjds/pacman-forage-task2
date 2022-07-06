@@ -3,7 +3,7 @@
 
 Ghost::Ghost()
 {
-
+    killed = 0;
 }
 
 void    Ghost::ft_set_default()
@@ -70,22 +70,27 @@ int     Ghost::ft_check_move(int i_pos, int j_pos)
 
 int        Ghost::ft_check_intersect()
 {
-    if (i_pos == pacman->ft_get_pacman_i() && j_pos == pacman->ft_get_pacman_j()
-            && !pacman->ft_scared_state())
+    // CHANGE - Pacman is immortal
+//    if (i_pos == pacman->ft_get_pacman_i() && j_pos == pacman->ft_get_pacman_j()
+//            && !pacman->ft_scared_state())
+//    {
+//        ft_clear_map();
+//        pacman->ft_set_defaut();
+//        pacman->ft_set_lives();
+//        return (1);
+//    }
+    if (i_pos == pacman->ft_get_pacman_i() && j_pos == pacman->ft_get_pacman_j())
     {
         ft_clear_map();
-        pacman->ft_set_defaut();
-        pacman->ft_set_lives();
-        return (1);
-    }
-    if (i_pos == pacman->ft_get_pacman_i() && j_pos == pacman->ft_get_pacman_j()
-            && pacman->ft_scared_state())
-    {
-        ft_clear_map();
-        i_pos = 8;
-        j_pos = 9;
-        this->setPos(j_pos * 32, i_pos * 32);
-        pacman->ft_incr_score();
+
+        // CHANGE - Kill the ghosts
+        killed = 1;
+        scene->removeItem(this);
+
+//        i_pos = 8;
+//        j_pos = 9;
+//        this->setPos(j_pos * 32, i_pos * 32);
+//        pacman->ft_incr_score();
         return (1);
     }
     return (0);
@@ -177,4 +182,9 @@ int         Ghost::ft_set_direction_near()
 void        Ghost::ft_find_path()
 {
 
+}
+
+int        Ghost::ft_get_killed()
+{
+    return (killed);
 }

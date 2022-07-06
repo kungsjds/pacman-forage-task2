@@ -1,6 +1,8 @@
 #include "pacman.h"
 #include <iostream>
 
+int end_game = 0;
+
 void    PacMan::ft_update_scene()
 {
     static int flag;
@@ -67,7 +69,8 @@ void    PacMan::ft_incr_score()
 
 void    PacMan::ft_set_lives()
 {
-    lives--;
+    // CHANGE - Pacman is immortal
+//    lives--;
 }
 
 PacMan::PacMan(int **map_i, QGraphicsPixmapItem **map_p, QGraphicsScene *sc)
@@ -142,7 +145,7 @@ void    PacMan::ft_move()
         scene->removeItem(text);
         flag = 1;
     }
-    if (lives <= 0 && !flag)
+    if (end_game && !flag)
     {
         message->setDefaultTextColor(0x00ff00ff);
         message->setFont(QFont("times", 60));

@@ -142,7 +142,9 @@ void        Clyde::ft_set_friends(Blinky *bl, Pinky *pnc, Inky *ink)
 
 void    Clyde::ft_move_ghost()
 {
-    if (pacman->ft_get_point() >= 90)
+//    CHANGE - leave more fast
+    if (pacman->ft_get_point() >= 1)
+//    END
     {
         ft_find_pacman();
         if (direction == 1)

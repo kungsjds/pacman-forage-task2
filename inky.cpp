@@ -172,7 +172,9 @@ void        Inky::ft_set_friends(Blinky *bl, Pinky *pnc, Clyde *cld)
 
 void    Inky::ft_move_ghost()
 {
-    if (pacman->ft_get_point() >= 100)
+//    CHANGE - leave more fast
+    if (pacman->ft_get_point() >= 2)
+//    END
     {
         ft_find_pacman();
         if (direction == 1)

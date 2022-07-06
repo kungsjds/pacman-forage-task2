@@ -19,8 +19,10 @@ protected:
     int             map_path[size_x][size_y];
     int             x_dir[4] = { 1, -1, 0, 0 };
     int             y_dir[4] = { 0, 0, 1, -1 };
+    int             killed; // CHANGED - to kill the ghosts
     PacMan          *pacman;
     QGraphicsScene  *scene;
+
 public:
     void            ft_clear_map();
     void            ft_restore_path();
@@ -32,6 +34,7 @@ public:
     int             ft_get_i_pos();
     int             ft_get_j_pos();
     int             ft_check_move(int i_pos, int j_pos);
+    int ft_get_killed();
     virtual void    ft_set_default() = 0;
     virtual void    ft_calculate_point() = 0;
                     Ghost();
